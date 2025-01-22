@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS public.visits ADD COLUMN IF NOT EXISTS tour_type varchar(64);

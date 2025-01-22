@@ -1,0 +1,3 @@
+ALTER TABLE notification_templates_config RENAME TO notification_templates;
+
+ALTER TABLE notification_templates RENAME COLUMN notification_templates_config_id TO notification_template_id;

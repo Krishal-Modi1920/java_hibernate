@@ -1,0 +1,4 @@
+@Library('jenkins-shared-pipelines@vault-plugin') import useJavaPipeline
+useJavaPipeline gradleVersion: '8.0.2', jdkVersion: '17', dockerImageName: 'vtms-api'
+
+// gradleVersion is as per version in gradle/gradle-wrapper.properties

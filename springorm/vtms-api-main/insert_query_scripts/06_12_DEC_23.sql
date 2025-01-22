@@ -1,0 +1,4 @@
+insert into public.notification_templates (notification_template_id, created_at, created_by, status, updated_at, updated_by, notification_template, temmpate_id, version, channel) values ('62bd47d9-5d38-426f-8448-8cf552827590', '2023-12-12 12:17:33.000000', 'AUTO', 'ACTIVE', '2023-12-12 12:17:48.000000', 'AUTO', 'VISIT_CANCELLED_BY_VISITOR_EMAIL', 't-c30f2a2df0', 1, 'EMAIL');
+insert into public.notification_templates (notification_template_id, created_at, created_by, status, updated_at, updated_by, notification_template, temmpate_id, version, channel) values ('08cfb5e2-f609-4626-8772-370dd98410b9', '2023-12-12 12:17:33.000000', 'AUTO', 'ACTIVE', '2023-12-12 12:17:48.000000', 'AUTO', 'VISIT_CANCELLED_BY_ADMIN_EMAIL', 't-07ec242001', 1, 'EMAIL');
+
+delete from public.notification_templates where notification_template_id = '5248c90f-1f15-4456-863e-346de1d9234e';

@@ -1,0 +1,58 @@
+# Used to read properties (secrets) injected by hashicorp vault in the FS on cloud env
+# Disabling on local env as we'll not use vault during development
+external.properties.enabled: false
+
+springdoc:
+  api-docs:
+    path: /internal/api-docs
+
+spring.datasource:
+  driver-class-name: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/vtmsdb?prepareThreshold=0
+  username: postgres
+  password: root
+
+spring.flyway:
+  enabled: true
+
+spring.data:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    ssl: false
+
+#used to generate database script in local which helps us to create flyway migration scripts.
+spring.jpa:
+  properties:
+    #used to generate database script in local which helps us to create flyway migration scripts.
+    javax.persistence.schema-generation:
+      create-source: metadata
+      scripts:
+        action: update
+        create-target: update-script.sql
+    hibernate:
+      show_sql: true
+      format_sql: true
+
+sso.client:
+  #url: https://ims.dev.na.baps.org/ssoapi-v2/api/
+  url: https://ims.dev.na.baps.org/ssoapi-v2local/api
+
+notification:
+  enable: true
+  client:
+    url: https://api.qa.bapsapps.org
+    key: cid-f6e4f7feca
+    secret: 508ec0fa-5a03-4f16-b7a7-a3c5d9dc9117
+
+front.end:
+  baseurl: http://localhost:5005/dev
+  public-baseurl: https://vtms-akdm.globalvoxprojects.com
+
+public.auth:
+  key: AKSHAHM
+
+is_auth.disable: false
+
+# every day at 8:00 pm cron
+daily-visit-list-cron: "0 0 20 * * *"

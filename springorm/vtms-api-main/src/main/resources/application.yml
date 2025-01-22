@@ -1,0 +1,152 @@
+# Used to read properties (secrets) injected by hashicorp vault in the FS on cloud env
+external.properties.enabled: false
+
+springdoc:
+  api-docs:
+    path: /internal/api-docs
+    
+api-doc.server-url: https://api.dev.bapsapps.org/vtms
+
+# Database Connection
+spring.datasource:
+  driver-class-name: org.postgresql.Driver
+  url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?prepareThreshold=0 # Disable prepared stmts: https://stackoverflow.com/questions/7611926/postgres-error-prepared-statement-s-1-already-exists
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
+
+#To Use camelCase Strategy on DB Column
+spring:
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  main:
+    banner-mode: off
+
+# REDIS Cache Configuration
+spring.cache:
+  type: redis
+  redis:
+    cache-null-values: true
+    key-prefix: 'vtms::' # TODO: PREFIX TO BE CHANGED ACCORDING TO USAGE
+    time-to-live: 1m # Default TTL if nothing specified explicitly
+
+spring.data:
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    ssl: false
+    timeout: 1s # Read timeout after which it will not read from cache
+    repositories:
+      enabled: false # TODO: REMOVE BELOW IF REDIS BEING USED AS MAIN STORAGE
+
+spring.flyway:
+  locations: classpath:db/migration/{vendor}
+
+# API Throttling Configuration
+bucket4j:
+  enabled: false
+  filters:
+    - cache-name: rate-limit-buckets
+      url: .*
+      http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\": \"You have exhausted your API Request Quota\" }"
+      hide-http-response-headers: true # Hides response headers like x-rate-limit-remaining or x-rate-limit-retry-after-seconds on rate limiting
+      rate-limits:
+        - expression: getRemoteAddr() # IP based filter
+          bandwidths:
+            - capacity: 20
+              time: 1
+              unit: seconds
+      metrics:
+        tags:
+          - key: IP
+            expression: getRemoteAddr()
+            types: REJECTED_COUNTER # for data privacy reasons the IP should only be collected on bucket rejections
+
+# Resilience Configuration
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      failureRateThreshold: 50
+      slowCallRateThreshold: 80
+      slowCallDurationThreshold: 5s
+      slidingWindowType: COUNT_BASED
+      slidingWindowSize: 100
+      minimumNumberOfCalls: 100
+      waitDurationInOpenState: 30s
+      permittedNumberOfCallsInHalfOpenState: 10
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      eventConsumerBufferSize: 10
+      recordExceptions:
+        - org.springframework.web.client.HttpServerErrorException
+        - java.util.concurrent.TimeoutException
+        - java.io.IOException
+#  instances:
+#    test: # TODO: CUSTOM DEFINED RETRY
+#      baseConfig: default
+#      retryExceptions:
+#        - org.baps.api.exceptions.CustomException
+
+resilience4j.retry:
+  configs:
+    default:
+      maxAttempts: 3
+      waitDuration: 100ms
+      retryExceptions:
+        - org.springframework.web.client.HttpServerErrorException
+        - java.util.concurrent.TimeoutException
+        - java.io.IOException
+#  instances:
+#    test: # TODO: CUSTOM DEFINED RETRY
+#      baseConfig: default
+#      retryExceptions:
+#        - org.baps.api.exceptions.CustomException
+
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,application/hal+json,text/plain,text/html
+
+management.endpoints.web:
+  base-path: /internal
+  exposure:
+    include: health,prometheus
+
+management.endpoint.health:
+  probes:
+    enabled: true
+
+# TODO: CUSTOM LOGGING LEVEL DEFINITION
+logging:
+  level:
+    org.baps.api: TRACE
+    freemarker: off
+
+sso.client:
+  url: ${SSO_CLIENT_URL}
+
+notification:
+  enable: true
+  client:
+    url: ${NOTIFICATION_CLIENT_URL}
+    key: ${NOTIFICATION_CLIENT_KEY}
+    secret: ${NOTIFICATION_CLIENT_SECRET}
+
+front.end:
+  baseurl: ${FRONT_END_URL}
+  public-baseurl: ${FRONT_END_PUBLIC_URL}
+
+public.auth:
+  key: ${PUBLIC_AUTH_KEY}
+  
+tour_slots.interval: 15
+
+redis.enable: false
+
+# Allow origin comma seprated
+allow:
+  origins: "*, http://localhost:8080"
+
+daily-visit-list-cron: ${DAILY_VISIT_LIST_CRON}
+
+

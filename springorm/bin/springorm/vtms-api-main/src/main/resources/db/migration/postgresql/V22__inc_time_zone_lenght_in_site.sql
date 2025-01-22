@@ -1,0 +1,2 @@
+ALTER TABLE sites
+ALTER COLUMN time_zone TYPE VARCHAR(50);
