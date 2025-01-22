@@ -1,0 +1,33 @@
+***************************************************************************************************************************************************************
+-ORM = Object Relational Mapping
+- ORM can be done in many ways 
+	1. Hibernate
+	2. Oracle -> Toplink 
+	3. Ibatis
+- Here we have to map the fields in java program to database columns 
+Previously we were using XML and Annotation in spring for mapping purpose
+Program  <>  ORM  <>  Database
+
+- For JDBC queries we were having JdbcTemplate here we will be having HibernateTemplate consisting of 
+(Save, Update, Insert, Get, loadAll) 
+
+					(Interface)				      (database properties like username , password)
+Product Dao -> Hibernate Template -> Session Factory <- Local Session FactoryBean -> Data Source,Hibernate Properties and Annotated class
+
+--Session factory wont able to give the object to Hibernate template , thus its child local Session Factory Bean give the object to Hibernate Template -> Product Dao
+-- Also we can make ProductDao interface so for that create ProductDaoImpl
+
+
+ProductDaoImpl
+	^
+	|				(Interface)				    (database properties like username , password)
+Product Dao -> Hibernate Template -> Session Factory <- Local Session FactoryBean -> Data Source,Hibernate Properties and Annotated class
+
+So ProductDaoImpl will give the object to Product Dao and then it will be received by Hibernate template
+-JPA is identical to Hibernate there is only few difference of classes among them
+(Java Persistence API)
+
+***************************************************************************************************************************************************************
+
+
+***************************************************************************************************************************************************************
